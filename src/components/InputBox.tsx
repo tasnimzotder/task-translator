@@ -60,13 +60,13 @@ const InputBox = () => {
   };
 
   return (
-    <div className="w-full text-center flex flex-col gap-5">
+    <div className="w-full text-center flex flex-col gap-5 my-5">
       <div>
-        <div>
+        {/* <div>
           <span>Type your query</span>
-        </div>
+        </div> */}
 
-        <div className="flex flex-col justify-center items-center my-10 gap-3">
+        <div className="flex flex-col justify-center items-center gap-3">
           <select
             value={os}
             onChange={(event) => {
@@ -119,7 +119,7 @@ const InputBox = () => {
         {command !== '' && (
           <div className="flex flex-col gap-4 my-6">
             <div>
-              <code className="text-sm bg-gray-800 px-4 py-2 my-10 rounded">
+              <code className="text-sm bg-gray-800 px-4 py-2 my-10 rounded font-mono">
                 {command}
               </code>
             </div>

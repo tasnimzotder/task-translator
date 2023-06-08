@@ -1,5 +1,6 @@
 import Footer from '@/components/Footer';
 import InputBox from '@/components/InputBox';
+import StarOnGithub from '@/components/StarOnGithub';
 import Image from 'next/image';
 
 export default function Home() {
@@ -9,13 +10,15 @@ export default function Home() {
         <div>
           <div>
             {/* Title */}
-            <div className="text-xl">Task Translator</div>
+            <div className="text-2xl">Task Translator</div>
 
             {/* Subtitle */}
             <div className="text-sm text-gray-200">
               Translate your tasks into your CLI commands
             </div>
           </div>
+
+          <StarOnGithub />
 
           <div className="my-10">
             {/* Input box */}
