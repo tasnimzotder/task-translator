@@ -1,34 +1,49 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Task Translator
 
-## Getting Started
+![Image](./public/og.png)
 
-First, run the development server:
+## Description
+
+This is a simple tool to generate CLI commands from natural human language. The tool generates commands for general tasks such as creating files, directories, and more. Linux, Mac, and Windows are supported.
+
+## Caution ⚠️
+
+This tool is not intended to be used as a tool to generate commands for production use. It is intended to be used as a tool to help people learn how to use the command line.
+
+## Contributing
+
+Contributions are welcome!
+
+### Clone
+
+Clone this repo to your local machine using:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+git clone https://github.com/tasnimzotder/task-translator.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Use the package manager [yarn](https://yarnpkg.com/) to install the dependencies.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+yarn install
+```
 
-## Learn More
+### Set up the environment variables
 
-To learn more about Next.js, take a look at the following resources:
+Create a `.env` file in the root directory and add the following environment variables:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+OPENAI_API_KEY=<your-openai-api-key>
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Start the development server
 
-## Deploy on Vercel
+```bash
+yarn dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The project is licensed under the MIT license.

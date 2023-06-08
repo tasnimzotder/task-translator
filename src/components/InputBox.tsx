@@ -4,46 +4,80 @@ import { useState } from 'react';
 
 const InputBox = () => {
   const [query, setQuery] = useState<string>('');
+  const [os, setOs] = useState<string>('');
+
   const [command, setCommand] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
   };
 
+  const handleClear = () => {
+    setQuery('');
+    setCommand('');
+    setDescription('');
+
+    setOs('linux');
+  };
+
   // use /api/translate
   const handleTranslate = () => {
+    setIsLoading(true);
+
+    if (query === '') {
+      setIsLoading(false);
+
+      return;
+    }
+
     fetch('/api/translate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({
+        query: query,
+        os: os,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log({ data });
-        setCommand(data);
-        // alert(data);
+        data = JSON.parse(data);
+
+        setCommand(data.command);
+        setDescription(data.description);
+
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error({ error });
+
+        setIsLoading(false);
       });
   };
 
   return (
-    <div className="w-full text-center">
+    <div className="w-full text-center flex flex-col gap-5 my-5">
       <div>
-        <div>
+        {/* <div>
           <span>Type your query</span>
-        </div>
+        </div> */}
 
-        <div>
-          {/* <textarea
-            value={query}
-            onChange={handleQueryChange}
-            className="w-full px-4 py-2 text-gray-700 bg-gray-200 rounded"
-            onSubmit={handleTranslate}
-          /> */}
+        <div className="flex flex-col justify-center items-center gap-3">
+          <select
+            value={os}
+            onChange={(event) => {
+              setOs(event.target.value);
+            }}
+            className="w-38 px-4 py-2 text-gray-700 bg-gray-200 rounded mb-6"
+          >
+            <option value="linux">Linux</option>
+            <option value="mac">Mac</option>
+            <option value="windows">Windows</option>
+          </select>
 
           <input
             type="text"
@@ -57,13 +91,24 @@ const InputBox = () => {
               }
             }}
           />
-        </div>
-      </div>
 
-      <div>
-        <button onClick={handleTranslate}>
-          <span>Translate</span>
-        </button>
+          <div className="flex flex-row gap-5">
+            <button
+              onClick={handleClear}
+              className="bg-gray-500 rounded-md px-3 py-1.5"
+            >
+              Clear
+            </button>
+
+            <button
+              onClick={handleTranslate}
+              className="bg-blue-500 rounded-md px-3 py-1.5"
+            >
+              <span>Translate</span>
+            </button>
+          </div>
+          {isLoading && <div>Loading...</div>}
+        </div>
       </div>
 
       <div>
@@ -71,11 +116,19 @@ const InputBox = () => {
           <span>Your command</span>
         </div>
 
-        <div>
-          <span>
-            <code>{command}</code>
-          </span>
-        </div>
+        {command !== '' && (
+          <div className="flex flex-col gap-4 my-6">
+            <div>
+              <code className="text-sm bg-gray-800 px-4 py-2 my-10 rounded font-mono">
+                {command}
+              </code>
+            </div>
+
+            <div>
+              <span>{description}</span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

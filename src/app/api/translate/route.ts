@@ -7,22 +7,25 @@ if (!process.env.OPENAI_API_KEY) {
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export async function POST(req: NextRequest) {
-  const { query } = await req.json();
+  const { query, os } = await req.json();
 
-  const prompt = `Translate this natural language into CLI commands:\n\nInput: ${query}\n\nOutput:
+  const prompt = `Translate this natural language into CLI commands: ${query}:
 
     Rules:
-    - the command should work on linux
-    - the command should be as short as possible
-    - only output the command, not the description, nor any other text, just the command
-    - if any file_name or directory_name is mentioned, it should be replaced with a placeholder
+    - the <command> should work on the os: ${os}
+    - the <command> should be as short as possible
+    - the output should only contain the <command>
     - if no possible command exists, output "no command found"
+    - the <description> should be as short as possible
+    - the <description> should be a brief description of what the command does with a example usage
 
+    The output should be in a json format as follows:
+    
+    {
+      "command": "<command>",
+      "description": "<description>"
+    }
 
-    The example format is as follows:
-    "cat /etc/passwd"
-
-    The output should be in bash format.
     `;
   const response = await fetch('https://api.openai.com/v1/completions', {
     method: 'POST',
