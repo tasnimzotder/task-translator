@@ -46,4 +46,4 @@ yarn dev
 
 ## License
 
-The project is licensed under the MIT license.
+The project is licensed under the [MIT License](./LICENSE).
