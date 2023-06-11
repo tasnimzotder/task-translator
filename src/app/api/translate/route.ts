@@ -9,24 +9,22 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 export async function POST(req: NextRequest) {
   const { query, os } = await req.json();
 
-  const prompt = `Translate this natural language into CLI commands: ${query}:
+  const prompt = `Generate CLI command from natural language for the following query: "${query}"
 
     Rules:
-    - the <command> should work on the os: ${os}
-    - the <command> should be as short as possible
-    - the output should only contain the <command>
-    - if no possible command exists, output "no command found"
-    - the <description> should be as short as possible
-    - the <description> should be a brief description of what the command does with a example usage
+    - The generated <command> should be compatible with ${os}.
+    - The <command> should be accurate and reflect the intended task.
+    - The output should only contain the most relevant <command>.
+    - If no suitable command is found, please provide an alternative suggestion or output <command> as "no command found".
+    - The <description> should clearly explain what the command does in a very short sentence and also provide an example usage.
 
-    The output should be in a json format as follows:
-    
+    Always provide the output in the following JSON format:
     {
       "command": "<command>",
       "description": "<description>"
     }
-
     `;
+
   const response = await fetch('https://api.openai.com/v1/completions', {
     method: 'POST',
     headers: {
@@ -36,7 +34,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       prompt,
       temperature: 0.5,
-      max_tokens: 2048,
+      max_tokens: 512,
       n: 1,
       stop: '\\n',
       model: 'text-davinci-003',
@@ -50,54 +48,27 @@ export async function POST(req: NextRequest) {
     return new Response(response.statusText, { status: response.status });
   }
 
-  const data = await response.json();
+  let data = await response.json();
 
-  return new Response(JSON.stringify(data.choices[0].text.trim()));
+  if (!data.choices[0].text) {
+    const res = {
+      command: 'no command found',
+      description: 'no command found',
+    };
+
+    return new Response(JSON.stringify(res));
+  }
+
+  data = data.choices[0].text.trim();
+
+  const jsonStartIndex = data.indexOf('{');
+  const jsonEndIndex = data.lastIndexOf('}') + 1;
+
+  const response_data = data.substring(jsonStartIndex, jsonEndIndex);
+
+  return new Response(JSON.parse(JSON.stringify(response_data)), {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 }
-
-// if (process.env.NODE_ENV !== 'production') {
-//   require('dotenv').config();
-// }
-
-// // access this endpoint at /api/translate
-
-// export default async function GET(req: NextApiRequest, res: NextApiResponse) {
-//   // if (req.method !== 'POST') {
-//   //   res.status(405).json({ error: 'Method not allowed' });
-//   //   return;
-//   // }
-
-//   res.status(200).json({ message: 'Hello world' });
-//   return;
-
-//   const { query } = req.body;
-
-//   const prompt = `Translate this natural language into CLI commands:\n\nInput: ${query}\n\nOutput:
-
-//     The output should be in the following format:
-//         - The first line should be the command to run in bash (e.g. "ls -l")
-//         - The second line should be brief description of what the command does
-//     `;
-
-//   const response = await fetch(
-//     'https://api.openai.com/v1/engines/davinci/completions',
-//     {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: `Bearer ${OPENAI_API_KEY}`,
-//       },
-//       body: JSON.stringify({
-//         prompt,
-//         max_tokens: 1024 * 3,
-//         temperature: 0.3,
-//         top_p: 1,
-//         stop: ['\n'],
-//       }),
-//     }
-//   );
-
-//   const data = await response.json();
-
-//   res.status(200).json(data);
-// }
