@@ -7,6 +7,7 @@ import LoadingCircle from './LoadingCircle';
 const InputBox = () => {
   const [query, setQuery] = useState<string>('');
   const [os, setOs] = useState<string>('');
+  const [language, setLanguage] = useState<string>('bash');
 
   const [command, setCommand] = useState<string>('');
   const [description, setDescription] = useState<string>('');
@@ -14,7 +15,19 @@ const InputBox = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
+    const os_local = event.target.value;
+
+    setQuery(os_local);
+
+    if (os_local === 'linux' || os_local === 'mac') {
+      setLanguage('bash');
+    } else if (os_local === 'windows') {
+      setLanguage('powershell');
+    }
+  };
+
+  const handleOSChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setOs(event.target.value);
   };
 
   const handleClear = () => {
@@ -74,9 +87,7 @@ const InputBox = () => {
         <div className="flex flex-col justify-center items-center gap-3">
           <select
             value={os}
-            onChange={(event) => {
-              setOs(event.target.value);
-            }}
+            onChange={handleOSChange}
             className="w-38 px-4 py-2 text-gray-700 bg-gray-200 rounded mb-6"
           >
             <option value="linux">Linux</option>
@@ -125,10 +136,7 @@ const InputBox = () => {
 
           <div className="flex flex-col gap-4 my-6">
             <div>
-              {/* <code className="text-sm bg-gray-800 px-4 py-2 my-10 rounded font-mono">
-                {command}
-              </code> */}
-              <CodeArea code={command} language="bash" />
+              <CodeArea code={command} language={language} />
             </div>
 
             <div>
