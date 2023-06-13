@@ -42,7 +42,7 @@ const CodeArea = ({ code, language }: { code: string; language: string }) => {
         <div>
           {/* is copied */}
           {isCopied ? (
-            <div className=" bg-gray-800 text-white rounded">Copied!</div>
+            <div className="bg-gray-800 text-white rounded">Copied!</div>
           ) : (
             <button className="px-3 text-lg" onClick={handleCopy}>
               <IoCopyOutline />

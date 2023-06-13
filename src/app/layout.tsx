@@ -27,6 +27,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
 
         <meta name="author" content={metadata.author} />
+        <meta name="keywords" content={metadata.keywords} />
 
         {/* Open Graph */}
         <meta property="og:title" content={metadata.title} />
