@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Configuration, OpenAIApi } from 'openai';
 
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('OPENAI_API_KEY is not set');
 }
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const configuration = new Configuration({
+  apiKey: OPENAI_API_KEY,
+});
+
+const openai = new OpenAIApi(configuration);
 
 const parseJsonPart = (data: string) => {
   const jsonStartIndex = data.indexOf('{');
@@ -34,32 +41,23 @@ export async function POST(req: NextRequest) {
     }
     `;
 
-  const response = await fetch('https://api.openai.com/v1/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      prompt,
-      temperature: 0.5,
-      max_tokens: 512,
-      n: 1,
-      stop: '\\n',
-      model: 'text-davinci-003',
-      // frequency_penalty: 0.5,
-      // presence_penalty: 0.5,
-      // logprobs: 10,
-    }),
+  const response = await openai.createCompletion({
+    model: 'text-davinci-003',
+    prompt: prompt,
+    temperature: 0,
+    max_tokens: 100,
+    top_p: 1,
+    frequency_penalty: 0.2,
+    presence_penalty: 0,
   });
 
   if (response.status !== 200) {
     return new Response(response.statusText, { status: response.status });
   }
 
-  let data = await response.json();
+  let res_data = response.data;
 
-  if (!data.choices[0].text) {
+  if (!res_data.choices[0].text) {
     const res = {
       command: 'no command found',
       description: 'no command found',
@@ -68,7 +66,7 @@ export async function POST(req: NextRequest) {
     return new Response(JSON.stringify(res));
   }
 
-  data = data.choices[0].text.trim();
+  let data = res_data.choices[0].text.trim();
 
   const response_data = parseJsonPart(data);
 

@@ -100,9 +100,9 @@ const InputBox = () => {
             value={query}
             onChange={handleQueryChange}
             placeholder="Type your query. Example: Docker kill all running containers"
-            className="w-1/2 px-4 py-2 text-gray-700 bg-gray-800 rounded border-2 border-gray-50"
+            className="w-1/2 px-4 py-2 text-gray-200 bg-gray-800 rounded border-2 border-gray-50"
             // on key press enter
-            onKeyPress={(event) => {
+            onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 handleTranslate();
               }
