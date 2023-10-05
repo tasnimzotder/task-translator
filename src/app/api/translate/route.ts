@@ -6,6 +6,15 @@ if (!process.env.OPENAI_API_KEY) {
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
+const parseJsonPart = (data: string) => {
+  const jsonStartIndex = data.indexOf('{');
+  const jsonEndIndex = data.lastIndexOf('}') + 1;
+
+  const response_data = data.substring(jsonStartIndex, jsonEndIndex);
+
+  return JSON.parse(JSON.stringify(response_data));
+};
+
 export async function POST(req: NextRequest) {
   const { query, os } = await req.json();
 
@@ -38,9 +47,9 @@ export async function POST(req: NextRequest) {
       n: 1,
       stop: '\\n',
       model: 'text-davinci-003',
-      frequency_penalty: 0.5,
-      presence_penalty: 0.5,
-      logprobs: 10,
+      // frequency_penalty: 0.5,
+      // presence_penalty: 0.5,
+      // logprobs: 10,
     }),
   });
 
@@ -61,12 +70,9 @@ export async function POST(req: NextRequest) {
 
   data = data.choices[0].text.trim();
 
-  const jsonStartIndex = data.indexOf('{');
-  const jsonEndIndex = data.lastIndexOf('}') + 1;
+  const response_data = parseJsonPart(data);
 
-  const response_data = data.substring(jsonStartIndex, jsonEndIndex);
-
-  return new Response(JSON.parse(JSON.stringify(response_data)), {
+  return new Response(response_data, {
     headers: {
       'Content-Type': 'application/json',
     },
